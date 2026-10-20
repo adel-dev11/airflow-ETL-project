@@ -11,7 +11,7 @@ Everything runs inside **Docker**, so no manual installation of Airflow is neede
 ```
 airflow-project/
 ├── dags/
-│   └── ETL airflow .py       # The main DAG (the pipeline logic)
+│   └── daily_orders_report.py       # The main DAG (the pipeline logic)
 ├── plugins/                  # Custom Airflow plugins (empty for now)
 ├── config/                   # Airflow configuration files
 ├── docker-compose.yaml       # Spins up all services with Docker
@@ -32,7 +32,7 @@ extract  ──►  transform  ──►  load
 
 | Step          | What it does |
 |---------------|--------------|
-| **Extract**   | Connects to PostgreSQL, counts how many orders were placed **today**, and returns the number |
+| **Extract**   | Connects to PostgreSQL, counts how many orders were placed **on that day of run DAG**, and returns the number |
 | **Transform** | Validates that the count is not negative (basic data quality check) |
 | **Load**      | Inserts (or updates) the daily summary into the `daily_orders_summary` table |
 
@@ -95,7 +95,7 @@ FERNET_KEY
 
 ### 4. Start all services
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 This will start: PostgreSQL, Redis, Airflow Scheduler, Airflow Workers, Airflow API Server, and more.
 
@@ -152,12 +152,12 @@ CREATE TABLE IF NOT EXISTS public.daily_orders_summary (
 ## 🛑 How to Stop Everything
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 To also **delete all data** (the Postgres volume):
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ---
@@ -176,9 +176,8 @@ docker-compose down -v
 ## 📝 Notes
 
 - All task communication (Extract → Transform → Load) uses **XCom**, Airflow's built-in way to pass small data between tasks.
-- Timestamps in the database are stored in **Africa/Cairo** timezone.
 - The Celery **Flower** monitoring dashboard can be started optionally:
   ```bash
-  docker-compose --profile flower up -d
+  docker compose --profile flower up -d
   ```
   Then visit → **http://localhost:5555**
