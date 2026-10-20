@@ -12,7 +12,6 @@ Everything runs inside **Docker**, so no manual installation of Airflow is neede
 airflow-project/
 ├── dags/
 │   └── ETL airflow .py       # The main DAG (the pipeline logic)
-├── logs/                     # Airflow task logs (auto-generated)
 ├── plugins/                  # Custom Airflow plugins (empty for now)
 ├── config/                   # Airflow configuration files
 ├── docker-compose.yaml       # Spins up all services with Docker
@@ -90,13 +89,9 @@ cd airflow-project
 ### 3. Set up the `.env` file
 The `.env` file is already included. It contains:
 ```env
-AIRFLOW_UID=50000
-FERNET_KEY=6kKimjTgjQW3SGyni9Zda1VlzwUkh9O_kLUzO6sxZDI=
+AIRFLOW_UID
+FERNET_KEY
 ```
-> ⚠️ **Never share or commit your real `FERNET_KEY` to a public repo.** Generate a new one for production with:
-> ```bash
-> python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-> ```
 
 ### 4. Start all services
 ```bash
